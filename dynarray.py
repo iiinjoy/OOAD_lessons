@@ -10,6 +10,10 @@
 
 2) добавлен вспомогательный запрос length() для получения длины массива
 и более удобной итерации по элементам массива
+
+3) добавлена команда set_item() для изменения значения i-го элемента
+так же в целях эффективности; имеет сложность O(1).
+Реализация через remove/insert имела бы сложность O(N)
 """
 
 from abc import ABC, abstractmethod
@@ -26,6 +30,8 @@ class AbstractDynArray(ABC):
     REMOVE_FAIL = 1
     GET_ITEM_OK = 0
     GET_ITEM_FAIL = 1
+    SET_ITEM_OK = 0
+    SET_ITEM_FAIL = 1
 
     # КОНСТРУКТОР
     # постусловие: создан пустой динамический массив
@@ -61,6 +67,13 @@ class AbstractDynArray(ABC):
     def clear(self):
         pass
 
+    # изменить значение i-го элемента
+    # предусловие: индекс корректный, в пределах границ [0; length-1]
+    # постусловие: значение i-го элемента равно заданному (value)
+    @abstractmethod
+    def set_item(self, i, value):
+        pass
+
     # ЗАПРОСЫ
     # получение элемента по индексу
     # предусловие: индекс корректный, в пределах границ [0; length-1]
@@ -92,6 +105,11 @@ class AbstractDynArray(ABC):
     # возвращает GET_ITEM_*
     @abstractmethod
     def get_get_item_status(self):
+        pass
+
+    # возвращает SET_ITEM_*
+    @abstractmethod
+    def get_set_item_status(self):
         pass
 
 
@@ -161,6 +179,14 @@ class DynArray(AbstractDynArray):
         self.__insert_status__ = self.INSERT_FAIL
         self.__remove_status__ = self.REMOVE_FAIL
         self.__get_item_status__ = self.GET_ITEM_FAIL
+        self.__set_item_status__ = self.SET_ITEM_FAIL
+
+    def set_item(self, i, value):
+        if i < self.__count__:
+            self.__array__[i] = value
+            self.__set_item_status__ = self.SET_ITEM_OK
+        else:
+            self.__set_item_status__ = self.SET_ITEM_FAIL
 
     # ЗАПРОСЫ
     def get_item(self, index):
@@ -187,6 +213,9 @@ class DynArray(AbstractDynArray):
 
     def get_get_item_status(self):
         return self.__get_item_status__
+
+    def get_set_item_status(self):
+        return self.__set_item_status__
 
     # вспомогательные private функции
     def __make_array__(self, new_capacity):
