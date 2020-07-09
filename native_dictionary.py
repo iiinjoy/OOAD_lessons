@@ -19,7 +19,6 @@ class AbstractNativeDictionary(ABC):
         pass
 
     # КОМАНДЫ
-    # предусловие: в словаре достаточно свободного места
     # постусловие: пара ключ-значение добавлена в словарь
     @abstractmethod
     def add(self, key, value):
@@ -49,6 +48,11 @@ class AbstractNativeDictionary(ABC):
     @abstractmethod
     def size(self):
         """возвращает количество элементов в словаре"""
+        pass
+
+    @abstractmethod
+    def has_key(self, key):
+        """проверить наличие ключа в словаре"""
         pass
 
     # запросы статусов
@@ -141,6 +145,10 @@ class NativeDictionary(AbstractNativeDictionary):
         def is_filled(slot):
             return slot is not None and slot != self.__REMOVED_FLAG__
         return sum(is_filled(s) for s in self.__slots__)
+
+    def has_key(self, key):
+        (found, _) = self.__find__(key)
+        return found
 
     # запросы статусов
     def get_add_status(self):
