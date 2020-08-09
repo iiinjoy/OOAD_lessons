@@ -12,12 +12,14 @@ class AbstractBloomFilter(ABC):
         pass
 
     # КОМАНДЫ
+    # постусловие: строка добавлена в фильтр
     @abstractmethod
     def add(self, str1):
         """добавить строку str1 в фильтр"""
         pass
 
     @abstractmethod
+    # постусловие: фильтр очищен
     def clear(self):
         """очистить фильтр"""
         pass
